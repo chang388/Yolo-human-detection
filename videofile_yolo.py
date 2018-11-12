@@ -1,35 +1,22 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Thu Jul 19 20:54:17 2018
-
-@author: seraj
-"""
 
 import cv2
 from darkflow.net.build import TFNet
 import numpy as np
 import time
 
-import tensorflow as tf
-config = tf.ConfigProto()
-config.gpu_options.allow_growth = True
-sess = tf.Session(config=config)
-
 options = {
         
         'model':'cfg/yolo.cfg',
-        'load':'bin/yolov2.weights',
+        'load':'bin/yolo.weights',
         'threshold':0.3,
         'gpu': 1.0
         }
 
 tfnet = TFNet(options)
 
-capture = cv2.VideoCapture("vid_people.mp4")
+capture = cv2.VideoCapture("uofi.mp4")
 colors = [tuple(255 * np.random.rand(3)) for i in range(5)]
-
-fourcc = cv2.VideoWriter_fourcc(*'XVID')
-out11 = cv2.VideoWriter('output.mp4',fourcc, 20.0, (1280,720))
 
 
 while (capture.isOpened()):
@@ -43,14 +30,11 @@ while (capture.isOpened()):
             label = result['label']
             frame = cv2.rectangle(frame, tl, br, color, 7)
             frame = cv2.putText(frame, label, tl, cv2.FONT_HERSHEY_COMPLEX, 1, (0, 0, 0), 2)
-        
-        out11.write(frame)
+        cv2.imshow('frame',frame)    
         print('FPS {:.1f}'.format(1 / (time.time() - stime)))
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
-    else:
-        capture.release()
-        cv2.destroyAllWindows()
-        break
+
+capture.release()
+cv2.destroyAllWindows()
 print("finished")
-out11.release()
